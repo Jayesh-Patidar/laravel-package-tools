@@ -27,7 +27,9 @@ class InstallCommand extends Command
 
     public function __construct(Package $package)
     {
-        $this->signature = $package->shortName() . ':install';
+        $this->signature = $package->shortName() . ':install
+                    {--existing : Publish and overwrite only the files that have already been published}
+                    {--force : Overwrite any existing files}';
 
         $this->description = 'Install ' . $package->name;
 
@@ -48,6 +50,8 @@ class InstallCommand extends Command
 
             $this->callSilently("vendor:publish", [
                 '--tag' => "{$this->package->shortName()}-{$tag}",
+                '--force' => $this->option('force'),
+                '--existing' => $this->option('existing'),
             ]);
         }
 
@@ -154,11 +158,15 @@ class InstallCommand extends Command
     {
         $providerName = $this->package->publishableProviderName;
 
-        if (! $providerName) {
+        if (!$providerName) {
             return $this;
         }
 
-        $this->callSilent('vendor:publish', ['--tag' => $this->package->shortName() . '-provider']);
+        $this->callSilent('vendor:publish', [
+            '--tag' => $this->package->shortName() . '-provider',
+            '--force' => $this->option('force'),
+            '--existing' => $this->option('existing'),
+        ]);
 
         $namespace = Str::replaceLast('\\', '', $this->laravel->getNamespace());
 
