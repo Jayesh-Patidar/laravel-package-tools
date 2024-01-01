@@ -79,7 +79,7 @@ abstract class PackageServiceProvider extends ServiceProvider
             $now = Carbon::now();
             foreach ($this->package->migrationFileNames as $migrationFileName) {
                 $filePath = $this->package->basePath("/../database/migrations/{$migrationFileName}.php");
-                if (! file_exists($filePath)) {
+                if (!file_exists($filePath)) {
                     // Support for the .stub file extension
                     $filePath .= '.stub';
                 }
@@ -88,7 +88,8 @@ abstract class PackageServiceProvider extends ServiceProvider
                     $filePath => $this->generateMigrationName(
                         $migrationFileName,
                         $now->addSecond()
-                    ), ], "{$this->package->shortName()}-migrations");
+                    ),
+                ], "{$this->package->shortName()}-migrations");
 
                 if ($this->package->runsMigrations) {
                     $this->loadMigrationsFrom($filePath);
@@ -108,11 +109,11 @@ abstract class PackageServiceProvider extends ServiceProvider
             }
         }
 
-        if (! empty($this->package->commands)) {
+        if (!empty($this->package->commands)) {
             $this->commands($this->package->commands);
         }
 
-        if (! empty($this->package->consoleCommands) && $this->app->runningInConsole()) {
+        if (!empty($this->package->consoleCommands) && $this->app->runningInConsole()) {
             $this->commands($this->package->consoleCommands);
         }
 
@@ -169,12 +170,12 @@ abstract class PackageServiceProvider extends ServiceProvider
     {
         $migrationsPath = 'migrations/';
 
-        $len = strlen($migrationFileName) + 4;
-
         if (Str::contains($migrationFileName, '/')) {
             $migrationsPath .= Str::of($migrationFileName)->beforeLast('/')->finish('/');
             $migrationFileName = Str::of($migrationFileName)->afterLast('/');
         }
+
+        $len = strlen($migrationFileName) + 4;
 
         foreach (glob(database_path("{$migrationsPath}*.php")) as $filename) {
             if ((substr($filename, -$len) === $migrationFileName . '.php')) {
